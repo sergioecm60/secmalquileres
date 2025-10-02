@@ -114,40 +114,10 @@ function convertirGrupo($n) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Recibos</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .selector-container { margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-        h1 { color: #333; margin-bottom: 20px; }
-        label { font-weight: bold; margin-right: 10px; }
-        select, button { padding: 10px; font-size: 16px; border-radius: 4px; border: 1px solid #ddd; }
-        button { background: #007bff; color: white; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .recibo { border: 2px solid #333; padding: 20px; margin-top: 20px; }
-        .recibo-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .recibo-header h2 { margin: 0; color: #333; }
-        .recibo-header .info { text-align: right; }
-        .recibo-body p { margin: 5px 0; line-height: 1.6; }
-        .recibo-body .monto-letras { font-weight: bold; text-transform: uppercase; }
-        .recibo-detalles { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .recibo-detalles th, .recibo-detalles td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        .recibo-detalles th { background: #f2f2f2; }
-        .recibo-detalles .total { font-weight: bold; }
-        .recibo-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; text-align: center; }
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; border-radius: 0; padding: 0; }
-            .selector-container, .print-button { display: none; }
-            .recibo { border: none; margin-top: 0; }
-        }
-    </style>
-    <style>
-        .btn-secondary { background: #6c757d; color: white; text-decoration: none; display: inline-block; }
-        .btn-secondary:hover { background: #5a6268; }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
-    <div class="container">
+<body class="recibo-container">
+    <div class="container no-print">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <h1>🧾 Generador de Recibos</h1>
             <a href="index.php" class="btn btn-secondary" style="padding: 10px 15px; font-size: 16px; border-radius: 4px;">↩️ Volver al Menú</a>
@@ -167,7 +137,7 @@ function convertirGrupo($n) {
         </div>
 
         <?php if ($cobro_data): ?>
-        <div class="recibo" id="recibo-a-imprimir">
+        <div class="recibo">
             <div class="recibo-header">
                 <div>
                     <h2>RECIBO DE PAGO</h2>
@@ -225,7 +195,7 @@ function convertirGrupo($n) {
                 <p>Firma y Aclaración</p>
             </div>
         </div>
-        <button class="print-button" onclick="window.print()" style="margin-top: 20px;">🖨️ Imprimir Recibo</button>
+        <button class="btn btn-info print-button" onclick="window.print()" style="margin-top: 20px;">🖨️ Imprimir Recibo</button>
         <?php endif; ?>
     </div>
 </body>

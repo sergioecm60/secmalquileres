@@ -40,38 +40,8 @@ $inquilinos = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Inquilinos</title>
     <link rel="stylesheet" href="assets/css/styles.css">
-    <style>
-        .filtros { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        .filtros label { font-weight: bold; margin-right: 5px; }
-        .filtros input, .filtros select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #343a40; color: white; padding: 12px; text-align: left; font-weight: bold; }
-        td { padding: 10px; border-bottom: 1px solid #ddd; }
-        tr:hover { background: #f8f9fa; }
-        .estado-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .estado-activo { background: #d4edda; color: #155724; }
-        .estado-inactivo { background: #fff3cd; color: #856404; }
-        .estado-eliminado { background: #f8d7da; color: #721c24; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
-        .modal-content { background: white; margin: 30px auto; padding: 0; width: 90%; max-width: 700px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
-        .modal-header { background: #007bff; color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { margin: 0; color: white; border: none; padding: 0; }
-        .modal-body { padding: 20px; }
-        .close { color: white; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 20px; }
-        .close:hover { color: #f8d7da; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #007bff; outline: none; }
-        .modal-footer { padding: 15px 20px; background: #f8f9fa; text-align: right; border-radius: 0 0 8px 8px; }
-        .alert { padding: 12px; margin-bottom: 15px; border-radius: 4px; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .no-data { text-align: center; padding: 40px; color: #6c757d; font-style: italic; }
-        .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    </style>
 </head>
-<body>
+<body class="form-inquilinos">
     <div class="container">
         <h1>📋 Gestión de Inquilinos</h1>
         

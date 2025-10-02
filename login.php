@@ -59,285 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Gestión de Alquileres</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .login-container {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .logo-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 14px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 18px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 14px 15px 14px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .captcha-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .captcha-group input {
-            flex: 1;
-            padding-left: 15px;
-        }
-
-        .captcha-group img {
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .captcha-group img:hover {
-            transform: scale(1.05);
-        }
-
-        .captcha-refresh {
-            cursor: pointer;
-            color: #667eea;
-            font-size: 20px;
-            padding: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .captcha-refresh:hover {
-            transform: rotate(180deg);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .error {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            text-align: center;
-            animation: shake 0.5s;
-            box-shadow: 0 4px 15px rgba(238, 90, 111, 0.3);
-        }
-
-        .success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            text-align: center;
-            animation: slideDown 0.5s;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .register-link p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .register-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #999;
-            font-size: 18px;
-            user-select: none;
-        }
-
-        .password-toggle:hover {
-            color: #667eea;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 40px 30px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .captcha-group {
-                flex-direction: column;
-            }
-
-            .captcha-group input {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
-<body>
+<body class="login-page">
     <div class="login-wrapper">
         <div class="login-container">
             <div class="logo-section">
-                <div class="logo-icon">🏠</div>
+                <img src="assets/image/logo.png" alt="Logo SECM" class="logo-image">
                 <h1>Bienvenido</h1>
-                <p class="subtitle">Sistema de Gestión de Alquileres</p>
+                <p class="subtitle">SECM Gestión de Alquileres</p>
             </div>
 
             <?php if ($success): ?>
@@ -385,6 +116,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- El registro público ha sido deshabilitado -->
         </div>
     </div>
+
+    <footer class="page-footer-fixed">
+        <p>
+            <strong>SECM Gestión de Alquileres</strong> | 
+            By Sergio Cabrera | 
+            Copyleft © 2025 | 
+            <a href="licence.php">Licencia GNU GPL v3</a>
+        </p>
+        <p class="footer-contact">
+            ¿Necesitas ayuda? 
+            <a href="mailto:sergiomiers@gmail.com">📧 sergiomiers@gmail.com</a> | 
+            <a href="https://wa.me/541167598452" target="_blank">💬 WhatsApp +54 11 6759-8452</a>
+        </p>
+    </footer>
 
     <script>
         function togglePassword() {

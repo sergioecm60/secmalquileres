@@ -87,27 +87,7 @@ $usuarios = $pdo->query("SELECT * FROM users ORDER BY id DESC")->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios</title>
-    <link rel="stylesheet" href="assets/css/styles.css"> <!-- Asumiendo que tendrás un CSS central -->
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1, h2 { color: #333; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-danger { background: #dc3545; color: white; font-size: 12px; padding: 5px 10px; }
-        .btn-warning { background: #ffc107; color: black; font-size: 12px; padding: 5px 10px; }
-        .mensaje { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .mensaje.success { background: #d4edda; color: #155724; }
-        .mensaje.error { background: #f8d7da; color: #721c24; }
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f2f2f2; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
     <div class="container">

@@ -1,0 +1,203 @@
+/* assets/css/login.css */
+
+body.login-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    padding-bottom: 100px; /* Espacio para el footer fijo */
+}
+
+.login-wrapper {
+    width: 100%;
+    max-width: 380px; /* Reducido para un box más angosto */
+}
+
+.login-container {
+    background: white;
+    padding: 30px 25px; /* Reducido para un box más compacto */
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo-section {
+    text-align: center;
+    margin-bottom: 20px; /* Reducido */
+}
+
+.logo-image {
+    max-width: 100px; /* Ancho máximo para el logo */
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.login-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 600;
+    border: none;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px; /* Reducido */
+    font-size: 14px;
+}
+
+.login-container .form-group {
+    margin-bottom: 18px; /* Espacio ajustado entre campos */
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 18px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    padding-left: 45px;
+    background: #f8f9fa;
+}
+
+.login-container input[type="text"]:focus,
+.login-container input[type="password"]:focus {
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.captcha-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.captcha-group input {
+    flex: 1;
+    padding-left: 15px;
+}
+
+.captcha-group img {
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.captcha-group img:hover {
+    transform: scale(1.05);
+}
+
+.captcha-refresh {
+    cursor: pointer;
+    color: #667eea;
+    font-size: 20px;
+    padding: 8px;
+    transition: transform 0.3s ease;
+}
+
+.captcha-refresh:hover {
+    transform: rotate(180deg);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    font-size: 18px;
+    user-select: none;
+}
+
+.password-toggle:hover {
+    color: #667eea;
+}
+
+.error, .success {
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.error {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    animation: shake 0.5s;
+    box-shadow: 0 4px 15px rgba(238, 90, 111, 0.3);
+}
+
+.success {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    animation: slideDown 0.5s;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 25px 20px; /* Más compacto en móvil */
+    }
+    .login-container h1 {
+        font-size: 24px;
+    }
+    .captcha-group {
+        flex-direction: column;
+    }
+    .captcha-group input {
+        width: 100%;
+    }
+}
+
+/* --- Estilos del Footer Fijo (Login) --- */
+.page-footer-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 12px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.page-footer-fixed .footer-content { max-width: 1200px; margin: 0 auto; }
+.page-footer-fixed p { margin: 5px 0; }
+.page-footer-fixed .footer-contact { font-size: 11px; }
+.page-footer-fixed a {
+    color: #3498db;
+    text-decoration: none;
+}

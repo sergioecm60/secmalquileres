@@ -75,43 +75,9 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Contratos</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; margin-bottom: 30px; border-bottom: 3px solid #6f42c1; padding-bottom: 10px; }
-        h2 { color: #555; margin: 30px 0 20px; font-size: 20px; }
-        h3 { color: #666; margin: 20px 0 15px; font-size: 16px; background: #f8f9fa; padding: 10px; border-left: 4px solid #6f42c1; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
-        input:focus, select:focus { outline: none; border-color: #6f42c1; }
-        .btn { padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: all 0.3s; }
-        .btn-primary { background: #6f42c1; color: white; }
-        .btn-primary:hover { background: #5a32a3; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-secondary:hover { background: #545b62; }
-        .mensaje { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .mensaje.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .mensaje.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #6f42c1; color: white; font-weight: bold; }
-        tr:hover { background: #f5f5f5; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; }
-        .badge { display: inline-block; padding: 5px 10px; border-radius: 3px; font-size: 12px; }
-        .badge-success { background: #28a745; color: white; }
-        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #dee2e6; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 10px 20px; background: #e9ecef; border: none; border-radius: 4px 4px 0 0; cursor: pointer; }
-        .tab.active { background: #6f42c1; color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
+<body class="form-contratos">
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <h1>📄 Gestión de Contratos</h1>
@@ -302,17 +268,6 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
         </table>
     </div>
 
-    <script>
-        function showTab(tabName) {
-            const tabs = document.querySelectorAll('.tab');
-            const contents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => tab.classList.remove('active'));
-            contents.forEach(content => content.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-    </script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -30,59 +30,9 @@ $nombre_usuario = obtenerNombreUsuario();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Alquileres</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
-        header { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        header .header-left { flex: 1; }
-        header h1 { color: #333; font-size: 32px; margin-bottom: 10px; }
-        header p { color: #666; font-size: 16px; }
-        
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .user-avatar { width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; }
-        .user-details { text-align: right; }
-        .user-name { font-weight: bold; color: #333; }
-        .user-role { font-size: 12px; color: #999; }
-        .btn-logout { padding: 8px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s; text-decoration: none; display: inline-block; }
-        .btn-logout:hover { background: #c0392b; transform: translateY(-2px); }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card .icon { font-size: 40px; margin-bottom: 15px; }
-        .stat-card .value { font-size: 36px; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .stat-card .label { color: #666; font-size: 14px; text-transform: uppercase; }
-        
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .menu-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s; text-decoration: none; display: block; }
-        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 6px 25px rgba(0,0,0,0.15); }
-        .menu-card .icon { font-size: 50px; margin-bottom: 15px; }
-        .menu-card h3 { color: #333; font-size: 20px; margin-bottom: 10px; }
-        .menu-card p { color: #666; font-size: 14px; }
-        
-        .bg-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .bg-green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        .bg-purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
-        .bg-red { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
-        .bg-orange { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; }
-        .bg-teal { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
-        
-        .recent-section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .recent-section h2 { color: #333; margin-bottom: 20px; font-size: 24px; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; font-weight: bold; color: #555; }
-        tr:hover { background: #f8f9fa; }
-        
-        .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .badge-warning { background: #ffc107; color: #000; }
-        .badge-danger { background: #dc3545; color: white; }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
+<body class="dashboard-body">
     <div class="container">
         <header>
             <div class="header-left">
@@ -97,7 +47,7 @@ $nombre_usuario = obtenerNombreUsuario();
                     <div class="user-name"><?php echo htmlspecialchars($nombre_usuario); ?></div>
                     <div class="user-role">Administrador</div>
                 </div>
-                <a href="logout.php" class="btn-logout" onclick="return confirm('¿Está seguro que desea cerrar sesión?')">🚪 Salir</a>
+                <a href="logout.php" class="btn btn-logout" onclick="return confirm('¿Está seguro que desea cerrar sesión?')">🚪 Salir</a>
             </div>
         </header>
 
@@ -216,5 +166,23 @@ $nombre_usuario = obtenerNombreUsuario();
         </div>
         <?php endif; ?>
     </div>
+
+    <!-- Footer con licencia -->
+    <footer style="background: white; margin-top: 30px; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; max-width: 1400px; margin-left: auto; margin-right: auto;">
+        <div style="border-top: 2px solid #667eea; padding-top: 15px;">
+            <p style="margin: 8px 0; color: #333; font-size: 13px;">
+                <strong>SECM Gestión de Alquileres</strong> | 
+                By <strong>Sergio Cabrera</strong> | 
+                Copyleft © 2025 | 
+                <a href="licence.php" style="color: #667eea; text-decoration: none; font-weight: bold;">Licencia GNU GPL v3</a>
+            </p>
+            <p style="margin: 8px 0; color: #666; font-size: 12px;">
+                ¿Necesitas ayuda? 
+                <a href="mailto:sergiomiers@gmail.com" style="color: #667eea; text-decoration: none;">📧 sergiomiers@gmail.com</a> | 
+                <a href="https://wa.me/541167598452" target="_blank" style="color: #667eea; text-decoration: none;">💬 WhatsApp +54 11 6759-8452</a>
+            </p>
+        </div>
+    </footer>
+
 </body>
 </html>
