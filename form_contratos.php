@@ -265,6 +265,7 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                     <td><span class="badge badge-success">Activo</span></td>
                     <td>
                         <button onclick="editarContrato(<?php echo $cont['id']; ?>)" class="btn btn-warning" title="Editar">✏️</button>
+                        <button onclick="eliminarContrato(<?php echo $cont['id']; ?>)" class="btn btn-danger" title="Eliminar/Desactivar">🗑️</button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -518,6 +519,23 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
 
         function cerrarModal() {
             document.getElementById('modalContrato').style.display = 'none';
+        }
+
+        function eliminarContrato(id) {
+            if (!confirm('¿Está seguro de que desea desactivar este contrato? Esta acción lo marcará como inactivo.')) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('action', 'eliminar');
+            formData.append('id', id);
+
+            fetch('api/api_contratos.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) location.reload();
+                });
         }
     </script>
 </body>

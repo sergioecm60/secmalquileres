@@ -110,8 +110,8 @@ function editarContrato($pdo) {
 }
 
 function eliminarContrato($pdo) {
-    // La eliminación de contratos se maneja desactivándolos.
-    cambiarEstado($pdo, 0);
+    // La eliminación de contratos se maneja desactivándolos (eliminación lógica).
+    cambiarEstado($pdo, 0); // Llama a la función que pone activo = 0
 }
 
 function finalizarContrato($pdo) {
