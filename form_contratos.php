@@ -56,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
 }
 
 // Obtener datos para los selectores
-$inquilinos = $pdo->query("SELECT id, nombre_apellido, dni FROM inquilinos WHERE activo = 1 ORDER BY nombre_apellido")->fetchAll(PDO::FETCH_ASSOC);
+$inquilinos = $pdo->query("SELECT id, nombre, apellido, dni FROM inquilinos WHERE estado = 'activo' ORDER BY apellido, nombre")->fetchAll(PDO::FETCH_ASSOC);
 $propiedades = $pdo->query("SELECT id, codigo, direccion, departamento, localidad FROM propiedades WHERE activo = 1 ORDER BY direccion")->fetchAll(PDO::FETCH_ASSOC);
 $garantes = $pdo->query("SELECT id, nombre_apellido, dni FROM garantes ORDER BY nombre_apellido")->fetchAll(PDO::FETCH_ASSOC);
 
 // Obtener contratos activos
-$contratos = $pdo->query("SELECT c.*, i.nombre_apellido as inquilino, p.direccion, p.departamento, p.localidad 
+$contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inquilino, p.direccion, p.departamento, p.localidad 
                           FROM contratos c 
                           JOIN inquilinos i ON c.inquilino_id = i.id 
                           JOIN propiedades p ON c.propiedad_id = p.id 
@@ -188,7 +188,7 @@ $contratos = $pdo->query("SELECT c.*, i.nombre_apellido as inquilino, p.direccio
                                 <option value="">Seleccione un inquilino</option>
                                 <?php foreach ($inquilinos as $inq): ?>
                                     <option value="<?php echo $inq['id']; ?>">
-                                        <?php echo htmlspecialchars($inq['nombre_apellido'] . ' - DNI: ' . $inq['dni']); ?>
+                                        <?php echo htmlspecialchars($inq['apellido'] . ', ' . $inq['nombre'] . ' - DNI: ' . $inq['dni']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

@@ -28,12 +28,19 @@ USE `gestion_alquileres`;
 --
 CREATE TABLE `inquilinos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_apellido` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
+  `nombre` varchar(100) COLLATE utf8mb4_spanish_ci NOT NULL,
+  `apellido` varchar(100) COLLATE utf8mb4_spanish_ci NOT NULL,
   `dni` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL,
   `telefono` varchar(50) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `email` varchar(100) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `fecha_alta` timestamp NOT NULL DEFAULT current_timestamp(),
-  `activo` tinyint(1) DEFAULT 1,
+  `direccion` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `localidad` varchar(100) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `provincia` varchar(100) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `observaciones` text COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `estado` enum('activo','inactivo','eliminado') COLLATE utf8mb4_spanish_ci NOT NULL DEFAULT 'activo',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `dni` (`dni`),
   KEY `idx_inquilino_dni` (`dni`)
@@ -42,10 +49,10 @@ CREATE TABLE `inquilinos` (
 --
 -- Volcado de datos para la tabla `inquilinos`
 --
-INSERT INTO `inquilinos` (`nombre_apellido`, `dni`, `telefono`, `email`) VALUES
-('DE MARIA IGNACIO', '43465696', '1130625982', 'ignacio@email.com'),
-('GARCIA VIGEZZI FERNANDO', '28925473', '1568360458', 'fernando@email.com'),
-('SOLIANI ANTONELLA CARLA', '30123456', '1155667788', 'antonella@email.com');
+INSERT INTO `inquilinos` (`nombre`, `apellido`, `dni`, `telefono`, `email`) VALUES
+('Ignacio', 'De Maria', '43465696', '1130625982', 'ignacio@email.com'),
+('Fernando', 'Garcia Vigezzi', '28925473', '1568360458', 'fernando@email.com'),
+('Antonella Carla', 'Soliani', '30123456', '1155667788', 'antonella@email.com');
 
 --
 -- Estructura de tabla para la tabla `propiedades`
@@ -131,7 +138,7 @@ CREATE TABLE `cobros` (
   `abl` decimal(15,2) DEFAULT 0.00,
   `otros_conceptos` decimal(15,2) DEFAULT 0.00,
   `total` decimal(15,2) NOT NULL,
-  `status` enum('PENDIENTE','PAGADO','VENCIDO') COLLATE utf8mb4_spanish_ci DEFAULT 'PENDIENTE',
+  `status` enum('PENDIENTE','PAGADO','VENCIDO','ANULADO') COLLATE utf8mb4_spanish_ci DEFAULT 'PENDIENTE',
   `fecha_cobro` date DEFAULT NULL,
   `fecha_vencimiento` date DEFAULT NULL,
   `observaciones` text COLLATE utf8mb4_spanish_ci DEFAULT NULL,
@@ -170,6 +177,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(50) COLLATE utf8mb4_spanish_ci NOT NULL,
   `email` varchar(150) COLLATE utf8mb4_spanish_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
+  `rol` enum('admin','usuario') COLLATE utf8mb4_spanish_ci NOT NULL DEFAULT 'usuario',
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   `ultimo_acceso` timestamp NULL DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 1,
@@ -181,8 +189,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- Usuario por defecto para pruebas (password: admin123)
-INSERT INTO users (nombre_completo, username, email, password) 
-VALUES ('Administrador', 'admin', 'admin@sistema.com', '$2y$10$kKFl3K/oqykaJP6/VQK4Y.3XljuDPw64dKW8YwZOBV41Wj9RWkeC.')
+INSERT INTO users (nombre_completo, username, email, password, rol) 
+VALUES ('Administrador', 'admin', 'admin@sistema.com', '$2y$10$kKFl3K/oqykaJP6/VQK4Y.3XljuDPw64dKW8YwZOBV41Wj9RWkeC.', 'admin')
 ON DUPLICATE KEY UPDATE id=id;
 
 -- -------------------------------------------------------------

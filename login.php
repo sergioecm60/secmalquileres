@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['nombre_completo'] = $user['nombre_completo'];
+                $_SESSION['rol'] = $user['rol'];
                 $_SESSION['last_activity'] = time();
                 header('Location: index.php');
                 exit();

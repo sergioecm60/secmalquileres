@@ -7,7 +7,7 @@ $cobro_id = isset($_GET['id']) ? $_GET['id'] : null;
 $cobro_data = null;
 
 if ($cobro_id) {
-    $stmt = $pdo->prepare("SELECT cob.*, i.nombre_apellido, i.dni, p.direccion, p.departamento, p.localidad 
+    $stmt = $pdo->prepare("SELECT cob.*, CONCAT(i.nombre, ' ', i.apellido) as nombre_completo, i.dni, p.direccion, p.departamento, p.localidad 
                            FROM cobros cob 
                            JOIN inquilinos i ON cob.inquilino_id = i.id 
                            JOIN propiedades p ON cob.propiedad_id = p.id 
@@ -17,7 +17,7 @@ if ($cobro_id) {
 }
 
 // Obtener todos los cobros pagados para el selector
-$cobros_pagados = $pdo->query("SELECT cob.id, cob.periodo, i.nombre_apellido, p.direccion, p.departamento, cob.total 
+$cobros_pagados = $pdo->query("SELECT cob.id, cob.periodo, CONCAT(i.apellido, ', ', i.nombre) as nombre_completo, p.direccion, p.departamento, cob.total 
                                FROM cobros cob 
                                JOIN inquilinos i ON cob.inquilino_id = i.id 
                                JOIN propiedades p ON cob.propiedad_id = p.id 
@@ -159,7 +159,7 @@ function convertirGrupo($n) {
                     <option value="">-- Seleccionar Recibo --</option>
                     <?php foreach ($cobros_pagados as $cobro): ?>
                         <option value="<?php echo $cobro['id']; ?>" <?php echo ($cobro_id == $cobro['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($cobro['periodo'] . ' - ' . $cobro['nombre_apellido'] . ' (' . $cobro['direccion'] . ') - ' . formatearMoneda($cobro['total'])); ?>
+                            <?php echo htmlspecialchars($cobro['periodo'] . ' - ' . $cobro['nombre_completo'] . ' (' . $cobro['direccion'] . ') - ' . formatearMoneda($cobro['total'])); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -184,7 +184,7 @@ function convertirGrupo($n) {
 
             <div class="recibo-body">
                 <p>
-                    Recibí de <strong><?php echo htmlspecialchars($cobro_data['nombre_apellido']); ?></strong>, 
+                    Recibí de <strong><?php echo htmlspecialchars($cobro_data['nombre_completo']); ?></strong>, 
                     DNI <strong><?php echo htmlspecialchars($cobro_data['dni']); ?></strong>,
                     la suma de <strong class="monto-letras">PESOS <?php echo numeroALetras($cobro_data['total']); ?></strong>.
                 </p>

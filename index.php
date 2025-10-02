@@ -4,7 +4,7 @@ require 'check_auth.php';
 require_once 'config.php';
 
 // Obtener estadísticas
-$total_inquilinos = $pdo->query("SELECT COUNT(*) FROM inquilinos WHERE activo = 1")->fetchColumn();
+$total_inquilinos = $pdo->query("SELECT COUNT(*) FROM inquilinos WHERE estado = 'activo'")->fetchColumn();
 $total_propiedades = $pdo->query("SELECT COUNT(*) FROM propiedades WHERE activo = 1")->fetchColumn();
 $total_contratos = $pdo->query("SELECT COUNT(*) FROM contratos WHERE activo = 1")->fetchColumn();
 $cobros_pendientes = $pdo->query("SELECT COUNT(*) FROM cobros WHERE status = 'PENDIENTE'")->fetchColumn();
@@ -12,7 +12,7 @@ $cobros_vencidos = $pdo->query("SELECT COUNT(*) FROM cobros WHERE status = 'VENC
 $total_cobrado_mes = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM cobros WHERE status = 'PAGADO' AND MONTH(fecha_cobro) = MONTH(CURDATE()) AND YEAR(fecha_cobro) = YEAR(CURDATE())")->fetchColumn();
 
 // Próximos vencimientos
-$proximos_vencimientos = $pdo->query("SELECT cob.*, i.nombre_apellido, p.direccion, p.departamento 
+$proximos_vencimientos = $pdo->query("SELECT cob.*, CONCAT(i.nombre, ' ', i.apellido) as nombre_completo, p.direccion, p.departamento 
                                        FROM cobros cob 
                                        JOIN inquilinos i ON cob.inquilino_id = i.id 
                                        JOIN propiedades p ON cob.propiedad_id = p.id 
@@ -169,6 +169,15 @@ $nombre_usuario = obtenerNombreUsuario();
                 <h3>Recibos</h3>
                 <p>Generar e imprimir recibos de pago</p>
             </a>
+
+            <?php if (esAdmin()): ?>
+            <a href="form_users.php" class="menu-card">
+                <div class="icon">⚙️</div>
+                <h3>Usuarios</h3>
+                <p>Administrar usuarios y permisos del sistema</p>
+            </a>
+            <?php endif; ?>
+
         </div>
 
         <?php if (count($proximos_vencimientos) > 0): ?>
@@ -188,7 +197,7 @@ $nombre_usuario = obtenerNombreUsuario();
                 <tbody>
                     <?php foreach ($proximos_vencimientos as $venc): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($venc['nombre_apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($venc['nombre_completo']); ?></td>
                         <td><?php echo htmlspecialchars($venc['direccion'] . ' ' . $venc['departamento']); ?></td>
                         <td><?php echo $venc['periodo']; ?></td>
                         <td><?php echo formatearMoneda($venc['total']); ?></td>

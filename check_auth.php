@@ -44,3 +44,8 @@ function actualizarUltimoAcceso($pdo, $user_id) {
 function obtenerNombreUsuario() {
     return isset($_SESSION['nombre_completo']) ? $_SESSION['nombre_completo'] : $_SESSION['username'];
 }
+
+// Función helper para verificar si el usuario es administrador
+function esAdmin() {
+    return isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin';
+}
