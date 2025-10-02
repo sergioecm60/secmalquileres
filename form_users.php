@@ -105,24 +105,24 @@ $usuarios = $pdo->query("SELECT * FROM users ORDER BY id DESC")->fetchAll();
             <input type="hidden" name="id" value="<?php echo $usuario_a_editar['id'] ?? ''; ?>">
             <div class="grid-2">
                 <div class="form-group">
-                    <label for="nombre_completo">Nombre Completo</label>
-                    <input type="text" name="nombre_completo" required value="<?php echo htmlspecialchars($usuario_a_editar['nombre_completo'] ?? ''); ?>">
+                    <label for="form_nombre_completo">Nombre Completo</label>
+                    <input type="text" id="form_nombre_completo" name="nombre_completo" required value="<?php echo htmlspecialchars($usuario_a_editar['nombre_completo'] ?? ''); ?>" autocomplete="name">
                 </div>
                 <div class="form-group">
-                    <label for="username">Nombre de Usuario</label>
-                    <input type="text" name="username" required value="<?php echo htmlspecialchars($usuario_a_editar['username'] ?? ''); ?>">
+                    <label for="form_username">Nombre de Usuario</label>
+                    <input type="text" id="form_username" name="username" required value="<?php echo htmlspecialchars($usuario_a_editar['username'] ?? ''); ?>" autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" required value="<?php echo htmlspecialchars($usuario_a_editar['email'] ?? ''); ?>">
+                    <label for="form_email">Email</label>
+                    <input type="email" id="form_email" name="email" required value="<?php echo htmlspecialchars($usuario_a_editar['email'] ?? ''); ?>" autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" name="password" <?php echo $usuario_a_editar ? '' : 'required'; ?> placeholder="<?php echo $usuario_a_editar ? 'Dejar en blanco para no cambiar' : ''; ?>">
+                    <label for="form_password">Contraseña</label>
+                    <input type="password" id="form_password" name="password" <?php echo $usuario_a_editar ? '' : 'required'; ?> placeholder="<?php echo $usuario_a_editar ? 'Dejar en blanco para no cambiar' : ''; ?>" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label for="rol">Rol</label>
-                    <select name="rol" required>
+                    <label for="form_rol">Rol</label>
+                    <select id="form_rol" name="rol" required>
                         <option value="usuario" <?php echo (isset($usuario_a_editar) && $usuario_a_editar['rol'] == 'usuario') ? 'selected' : ''; ?>>Usuario</option>
                         <option value="admin" <?php echo (isset($usuario_a_editar) && $usuario_a_editar['rol'] == 'admin') ? 'selected' : ''; ?>>Administrador</option>
                     </select>

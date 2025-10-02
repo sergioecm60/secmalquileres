@@ -121,6 +121,13 @@ CREATE TABLE `contratos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
+-- Volcado de datos para la tabla `contratos` (EJEMPLO)
+--
+INSERT INTO `contratos` (`id`, `codigo`, `inquilino_id`, `propiedad_id`, `fecha_inicio`, `duracion_meses`, `fecha_fin`, `deposito_ingreso`, `mes_1_3`, `activo`) VALUES
+(1, 'CONT-2024-001', 1, 1, '2024-01-01', 12, '2024-12-31', 150000.00, 150000.00, 1);
+
+
+--
 -- Estructura de tabla para la tabla `cobros`
 --
 CREATE TABLE `cobros` (

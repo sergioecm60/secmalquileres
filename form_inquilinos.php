@@ -172,48 +172,52 @@ $inquilinos = $stmt->fetchAll();
                     <input type="hidden" id="id_inquilino" name="id_inquilino">
                     <input type="hidden" id="accion" name="action" value="editar">
                     
-                    <div class="form-group">
-                        <label>Apellido *</label>
-                        <input type="text" id="apellido" name="apellido" required placeholder="Ingrese apellido">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="apellido">Apellido *</label>
+                            <input type="text" id="apellido" name="apellido" required placeholder="Ingrese apellido" autocomplete="family-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" id="nombre" name="nombre" required placeholder="Ingrese nombre" autocomplete="given-name">
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="dni">DNI *</label>
+                            <input type="text" id="dni" name="dni" required placeholder="Ej: 12345678" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" placeholder="Ej: +54 9 11 1234-5678" autocomplete="tel">
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label>Nombre *</label>
-                        <input type="text" id="nombre" name="nombre" required placeholder="Ingrese nombre">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" autocomplete="email">
                     </div>
                     
                     <div class="form-group">
-                        <label>DNI *</label>
-                        <input type="text" id="dni" name="dni" required placeholder="Ej: 12345678">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" name="direccion" placeholder="Calle y número" autocomplete="street-address">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="localidad">Localidad</label>
+                            <input type="text" id="localidad" name="localidad" placeholder="Ciudad" autocomplete="address-level2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="provincia">Provincia</label>
+                            <input type="text" id="provincia" name="provincia" placeholder="Provincia" autocomplete="address-level1">
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label>Teléfono</label>
-                        <input type="text" id="telefono" name="telefono" placeholder="Ej: +54 9 11 1234-5678">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="email" name="email" placeholder="ejemplo@correo.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Dirección</label>
-                        <input type="text" id="direccion" name="direccion" placeholder="Calle y número">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Localidad</label>
-                        <input type="text" id="localidad" name="localidad" placeholder="Ciudad">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Provincia</label>
-                        <input type="text" id="provincia" name="provincia" placeholder="Provincia">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Observaciones</label>
+                        <label for="observaciones">Observaciones</label>
                         <textarea id="observaciones" name="observaciones" rows="3" placeholder="Notas adicionales sobre el inquilino..."></textarea>
                     </div>
                 </div>
@@ -235,6 +239,16 @@ $inquilinos = $stmt->fetchAll();
             document.getElementById('modalTitulo').textContent = 'Nuevo Inquilino';
             document.getElementById('formInquilino').reset();
             document.getElementById('id_inquilino').value = '';
+            // Limpieza explícita de todos los campos para evitar datos residuales
+            document.getElementById('apellido').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('dni').value = '';
+            document.getElementById('telefono').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('direccion').value = '';
+            document.getElementById('localidad').value = '';
+            document.getElementById('provincia').value = '';
+            document.getElementById('observaciones').value = '';
             document.getElementById('accion').value = 'crear';
             document.getElementById('modalInquilino').style.display = 'block';
         }

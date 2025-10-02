@@ -176,28 +176,28 @@ $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
                     <div class="grid-3">
                         <div class="form-group">
-                            <label>Código</label>
+                            <label for="codigo">Código</label>
                             <input type="text" id="codigo" name="codigo" placeholder="PROP-001">
                         </div>
                         
                         <div class="form-group">
-                            <label>Dirección *</label>
+                            <label for="direccion">Dirección *</label>
                             <input type="text" id="direccion" name="direccion" required placeholder="Artigas 1159">
                         </div>
                         
                         <div class="form-group">
-                            <label>Departamento</label>
+                            <label for="departamento">Departamento</label>
                             <input type="text" id="departamento" name="departamento" placeholder="A, B, 1A">
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label>Localidad *</label>
+                        <label for="localidad">Localidad *</label>
                         <input type="text" id="localidad" name="localidad" required placeholder="General Rodriguez">
                     </div>
                     
                     <div class="form-group">
-                        <label>Descripción</label>
+                        <label for="descripcion">Descripción</label>
                         <textarea id="descripcion" name="descripcion" rows="3" placeholder="Características de la propiedad..."></textarea>
                     </div>
                 </div>
