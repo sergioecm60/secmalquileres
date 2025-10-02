@@ -34,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
         if (isset($_POST['periodo_desde']) && is_array($_POST['periodo_desde'])) {
             for ($i = 0; $i < count($_POST['periodo_desde']); $i++) {
                 $valores_alquiler[] = [
-                    'desde' => $_POST['periodo_desde'][$i],
-                    'hasta' => $_POST['periodo_hasta'][$i],
-                    'valor' => $_POST['periodo_valor'][$i]
+                    'desde' => (int)$_POST['periodo_desde'][$i],
+                    'hasta' => (int)$_POST['periodo_hasta'][$i],
+                    'valor' => (float)$_POST['periodo_valor'][$i]
                 ];
             }
         }
@@ -49,11 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
             $_POST['codigo'],
             $_POST['inquilino_id'],
             $_POST['propiedad_id'],
-            $_POST['garante_id'] ?: null,
+            $_POST['garante_id'] ?: null, // Corregido para incluir garante_id
             $fecha_inicio,
             $duracion,
             $fecha_fin,
-            $_POST['deposito_ingreso'],
+            $_POST['deposito_ingreso'] ?: 0, // Corregido para incluir deposito_ingreso
             json_encode($valores_alquiler)
         ]);
         $mensaje = "Contrato registrado exitosamente con ID: " . $pdo->lastInsertId();
@@ -223,13 +223,13 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                     </div>
                     <div id="periodos-container">
                         <!-- Los períodos se agregarán aquí dinámicamente -->
-                        <div class="periodo-item">
-                            <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" placeholder="Ej: 1" required></div>
-                            <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" placeholder="Ej: 6" required></div>
-                            <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" placeholder="0.00" required></div>
-                            <button type="button" class="btn btn-eliminar" onclick="this.parentElement.remove()">🗑️</button>
+                        <div class="periodo-item" data-periodo="1">
+                            <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" max="999" value="1" required></div>
+                            <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" max="999" value="12" required></div>
+                            <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" min="0" placeholder="0.00" required></div>
+                            <button type="button" class="btn btn-eliminar" onclick="eliminarPeriodo(this)" title="Eliminar período">🗑️</button>
                         </div>
-
+                
                     </div>
                 </div>
 
@@ -270,31 +270,66 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
 
     <script src="assets/js/main.js"></script>
     <script>
+        let contadorPeriodos = 1;
+
         function agregarPeriodo() {
+            contadorPeriodos++;
             const container = document.getElementById('periodos-container');
+            const ultimoPeriodo = container.lastElementChild;
+            
+            // Sugerir valores basados en el último período
+            let desdesugerido = 1;
+            if (ultimoPeriodo) {
+                const ultimoHasta = parseInt(ultimoPeriodo.querySelector('input[name="periodo_hasta[]"]').value) || 0;
+                desdesugerido = ultimoHasta + 1;
+            }
+            
             const item = document.createElement('div');
             item.classList.add('periodo-item');
+            item.setAttribute('data-periodo', contadorPeriodos);
             item.innerHTML = `
-                <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" placeholder="Ej: 7" required></div>
-                <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" placeholder="Ej: 12" required></div>
-                <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" placeholder="0.00" required></div>
-                <button type="button" class="btn btn-eliminar" onclick="this.parentElement.remove()">🗑️</button>
+                <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" max="999" value="${desdesugerido}" required></div>
+                <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" max="999" value="${desdesugerido + 11}" required></div>
+                <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" min="0" placeholder="0.00" required></div>
+                <button type="button" class="btn btn-eliminar" onclick="eliminarPeriodo(this)" title="Eliminar período">🗑️</button>
             `;
             container.appendChild(item);
         }
 
-        // Sobrescribir la función showTab para que no dé error si no existe el elemento
-        function showTab(tabName) {
-            const tabs = document.querySelectorAll('.tab');
-            const contents = document.querySelectorAll('.tab-content');
-            const clickedTab = event.currentTarget;
-
-            tabs.forEach(tab => tab.classList.remove('active'));
-            contents.forEach(content => content.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            clickedTab.classList.add('active');
+        function eliminarPeriodo(btn) {
+            const container = document.getElementById('periodos-container');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('Debe haber al menos un período de alquiler');
+            }
         }
+
+        function validarPeriodos() {
+            const container = document.getElementById('periodos-container');
+            const periodos = Array.from(container.querySelectorAll('.periodo-item'));
+            
+            for (let i = 0; i < periodos.length; i++) {
+                const desde = parseInt(periodos[i].querySelector('input[name="periodo_desde[]"]').value);
+                const hasta = parseInt(periodos[i].querySelector('input[name="periodo_hasta[]"]').value);
+                
+                if (desde > hasta) {
+                    alert(`Período ${i+1}: "Mes Desde" no puede ser mayor que "Mes Hasta"`);
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Validar antes de enviar el formulario de contrato
+        document.querySelector('form[action=""][method="POST"]').addEventListener('submit', function(e) {
+            if (document.querySelector('input[name="accion"]').value === 'guardar_contrato') {
+                if (!validarPeriodos()) {
+                    e.preventDefault();
+                }
+            }
+        });
     </script>
 </body>
 </html>

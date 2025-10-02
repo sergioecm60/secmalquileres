@@ -192,6 +192,10 @@ tr:hover { background: #f8f9fa; }
     margin-bottom: 10px;
     background-color: #fdfdfd;
 }
+.periodo-item:hover {
+    border-color: #6f42c1;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.1);
+}
 
 .periodo-item .form-group {
     margin-bottom: 0;
