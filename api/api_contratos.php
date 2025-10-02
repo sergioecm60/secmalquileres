@@ -68,48 +68,39 @@ function editarContrato($pdo) {
         return;
     }
     
-    $datos = [
-        'codigo' => trim($_POST['codigo'] ?? ''),
-        'inquilino_id' => filter_var($_POST['inquilino_id'], FILTER_VALIDATE_INT),
-        'propiedad_id' => filter_var($_POST['propiedad_id'], FILTER_VALIDATE_INT),
-        'garante_id' => filter_var($_POST['garante_id'], FILTER_VALIDATE_INT) ?: null,
-        'fecha_inicio' => $_POST['fecha_inicio'] ?? '',
-        'duracion_meses' => filter_var($_POST['duracion_meses'], FILTER_VALIDATE_INT),
-        'deposito_ingreso' => filter_var($_POST['deposito_ingreso'], FILTER_VALIDATE_FLOAT) ?: 0,
-        'mes_1_3' => filter_var($_POST['mes_1_3'], FILTER_VALIDATE_FLOAT) ?: 0,
-        'mes_4_6' => filter_var($_POST['mes_4_6'], FILTER_VALIDATE_FLOAT) ?: 0,
-        'mes_7_9' => filter_var($_POST['mes_7_9'], FILTER_VALIDATE_FLOAT) ?: 0,
-        'mes_10_12' => filter_var($_POST['mes_10_12'], FILTER_VALIDATE_FLOAT) ?: 0
-    ];
-    
-    if (empty($datos['inquilino_id']) || empty($datos['propiedad_id']) || 
-        empty($datos['fecha_inicio']) || empty($datos['duracion_meses'])) {
-        echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios']);
-        return;
-    }
-    
     try {
-        $fecha_fin = date('Y-m-d', strtotime($datos['fecha_inicio'] . " +{$datos['duracion_meses']} months -1 day"));
+        $fecha_inicio = $_POST['fecha_inicio'];
+        $duracion = $_POST['duracion_meses'];
+        $fecha_fin = date('Y-m-d', strtotime($fecha_inicio . " + $duracion months -1 day"));
         
-        if (!empty($datos['codigo'])) {
-            $stmt = $pdo->prepare("SELECT id FROM contratos WHERE codigo = ? AND id != ?");
-            $stmt->execute([$datos['codigo'], $id]);
-            if ($stmt->fetch()) {
-                echo json_encode(['success' => false, 'message' => 'Ya existe otro contrato con ese código']);
-                return;
+        // Procesar valores de alquiler
+        $valores_alquiler = [];
+        if (isset($_POST['periodo_desde']) && is_array($_POST['periodo_desde'])) {
+            for ($i = 0; $i < count($_POST['periodo_desde']); $i++) {
+                $valores_alquiler[] = [
+                    'desde' => (int)$_POST['periodo_desde'][$i],
+                    'hasta' => (int)$_POST['periodo_hasta'][$i],
+                    'valor' => (float)$_POST['periodo_valor'][$i]
+                ];
             }
         }
         
         $stmt = $pdo->prepare("UPDATE contratos SET 
                               codigo=?, inquilino_id=?, propiedad_id=?, garante_id=?,
                               fecha_inicio=?, duracion_meses=?, fecha_fin=?,
-                              deposito_ingreso=?, mes_1_3=?, mes_4_6=?, mes_7_9=?, mes_10_12=?
+                              deposito_ingreso=?, valores_alquiler=?
                               WHERE id=?");
         $stmt->execute([
-            $datos['codigo'], $datos['inquilino_id'], $datos['propiedad_id'], $datos['garante_id'],
-            $datos['fecha_inicio'], $datos['duracion_meses'], $fecha_fin,
-            $datos['deposito_ingreso'], $datos['mes_1_3'], $datos['mes_4_6'], 
-            $datos['mes_7_9'], $datos['mes_10_12'], $id
+            $_POST['codigo'],
+            $_POST['inquilino_id'],
+            $_POST['propiedad_id'],
+            $_POST['garante_id'] ?: null,
+            $fecha_inicio,
+            $duracion,
+            $fecha_fin,
+            $_POST['deposito_ingreso'] ?: 0,
+            json_encode($valores_alquiler),
+            $id
         ]);
         
         echo json_encode(['success' => true, 'message' => 'Contrato actualizado correctamente']);

@@ -249,6 +249,7 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                     <th>Duración</th>
                     <th>Fecha Fin</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -262,10 +263,102 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                     <td><?php echo $cont['duracion_meses']; ?> meses</td>
                     <td><?php echo date('d/m/Y', strtotime($cont['fecha_fin'])); ?></td>
                     <td><span class="badge badge-success">Activo</span></td>
+                    <td>
+                        <button onclick="editarContrato(<?php echo $cont['id']; ?>)" class="btn btn-warning" title="Editar">✏️</button>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="modalContrato" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Contrato</h2>
+                <span class="close" onclick="cerrarModal()">&times;</span>
+            </div>
+            <form id="formEditarContrato" onsubmit="guardarEdicion(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id" name="id">
+                    <input type="hidden" name="action" value="editar">
+                    
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" id="edit_codigo" name="codigo">
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Inquilino *</label>
+                            <select id="edit_inquilino_id" name="inquilino_id" required>
+                                <?php foreach ($inquilinos as $inq): ?>
+                                    <option value="<?= $inq['id'] ?>">
+                                        <?= htmlspecialchars($inq['apellido'] . ', ' . $inq['nombre']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Propiedad *</label>
+                            <select id="edit_propiedad_id" name="propiedad_id" required>
+                                <?php foreach ($propiedades as $prop): ?>
+                                    <option value="<?= $prop['id'] ?>">
+                                        <?= htmlspecialchars($prop['direccion'] . ' ' . $prop['departamento']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Garante</label>
+                        <select id="edit_garante_id" name="garante_id">
+                            <option value="">Sin garante</option>
+                            <?php foreach ($garantes as $gar): ?>
+                                <option value="<?= $gar['id'] ?>">
+                                    <?= htmlspecialchars($gar['nombre_apellido']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Fecha Inicio *</label>
+                            <input type="date" id="edit_fecha_inicio" name="fecha_inicio" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Duración (Meses) *</label>
+                            <input type="number" id="edit_duracion_meses" name="duracion_meses" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Depósito</label>
+                            <input type="number" id="edit_deposito_ingreso" name="deposito_ingreso" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin: 0;">Valores de Alquiler</h3>
+                            <button type="button" class="btn btn-secondary" onclick="agregarPeriodoEdit()">+ Agregar</button>
+                        </div>
+                        <div id="edit_periodos_container">
+                            <!-- Los períodos se cargarán aquí dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="assets/js/main.js"></script>
@@ -330,6 +423,102 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                 }
             }
         });
+    </script>
+    <script>
+        function editarContrato(id) {
+            fetch(`api/api_contratos.php?action=obtener&id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const c = data.data;
+                        
+                        // Llenar campos básicos
+                        document.getElementById('edit_id').value = c.id;
+                        document.getElementById('edit_codigo').value = c.codigo || '';
+                        document.getElementById('edit_inquilino_id').value = c.inquilino_id;
+                        document.getElementById('edit_propiedad_id').value = c.propiedad_id;
+                        document.getElementById('edit_garante_id').value = c.garante_id || '';
+                        document.getElementById('edit_fecha_inicio').value = c.fecha_inicio;
+                        document.getElementById('edit_duracion_meses').value = c.duracion_meses;
+                        document.getElementById('edit_deposito_ingreso').value = c.deposito_ingreso || 0;
+                        
+                        // Manejar valores de alquiler (JSON o campos antiguos)
+                        const container = document.getElementById('edit_periodos_container');
+                        container.innerHTML = ''; // Limpiar períodos existentes
+                        
+                        let periodos = [];
+                        
+                        // Intentar parsear valores_alquiler si existe
+                        if (c.valores_alquiler) {
+                            try {
+                                periodos = JSON.parse(c.valores_alquiler);
+                            } catch(e) {
+                                console.error('Error parseando valores_alquiler:', e);
+                            }
+                        }
+                        
+                        // Si no hay valores_alquiler JSON, usar campos antiguos
+                        if (periodos.length === 0) {
+                            if (c.mes_1_3 && c.mes_1_3 > 0) periodos.push({desde: 1, hasta: 3, valor: c.mes_1_3});
+                            if (c.mes_4_6 && c.mes_4_6 > 0) periodos.push({desde: 4, hasta: 6, valor: c.mes_4_6});
+                            if (c.mes_7_9 && c.mes_7_9 > 0) periodos.push({desde: 7, hasta: 9, valor: c.mes_7_9});
+                            if (c.mes_10_12 && c.mes_10_12 > 0) periodos.push({desde: 10, hasta: 12, valor: c.mes_10_12});
+                        }
+                        
+                        // Si aún no hay períodos, agregar uno vacío
+                        if (periodos.length === 0) {
+                            periodos.push({desde: 1, hasta: 12, valor: 0});
+                        }
+                        
+                        // Crear campos para cada período
+                        periodos.forEach((periodo, index) => {
+                            const item = document.createElement('div');
+                            item.className = 'periodo-item';
+                            item.innerHTML = `
+                                <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" value="${periodo.desde}" required></div>
+                                <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" value="${periodo.hasta}" required></div>
+                                <div class="form-group"><label>Valor</label><input type="number" name="periodo_valor[]" step="0.01" value="${periodo.valor}" required></div>
+                                <button type="button" class="btn btn-eliminar" onclick="eliminarPeriodoEdit(this)">🗑️</button>
+                            `;
+                            container.appendChild(item);
+                        });
+                        
+                        document.getElementById('modalContrato').style.display = 'block';
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('Error al cargar los datos del contrato');
+                });
+        }
+
+        function agregarPeriodoEdit() {
+            const container = document.getElementById('edit_periodos_container');
+            const item = document.createElement('div');
+            item.className = 'periodo-item';
+            item.innerHTML = `
+                <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" value="1" required></div>
+                <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" value="12" required></div>
+                <div class="form-group"><label>Valor</label><input type="number" name="periodo_valor[]" step="0.01" value="0" required></div>
+                <button type="button" class="btn btn-eliminar" onclick="eliminarPeriodoEdit(this)">🗑️</button>
+            `;
+            container.appendChild(item);
+        }
+
+        function eliminarPeriodoEdit(btn) {
+            const container = document.getElementById('edit_periodos_container');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('Debe haber al menos un período');
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalContrato').style.display = 'none';
+        }
     </script>
 </body>
 </html>
