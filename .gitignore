@@ -1,0 +1,9 @@
+# Archivo de configuración con credenciales sensibles
+
+
+# Archivos de IDE y editores
+.idea/
+.vscode/
+
+# Archivos generados por el sistema operativo
+.DS_Store
