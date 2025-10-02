@@ -151,6 +151,11 @@ $nombre_usuario = obtenerNombreUsuario();
                 <h3>Usuarios</h3>
                 <p>Administrar usuarios y permisos del sistema</p>
             </a>
+            <a href="form_configuracion.php" class="menu-card">
+                <div class="icon">🏢</div>
+                <h3>Mi Empresa</h3>
+                <p>Configurar los datos de la inmobiliaria</p>
+            </a>
             <?php endif; ?>
 
         </div>

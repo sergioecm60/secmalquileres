@@ -15,11 +15,21 @@ try {
     die("Error de conexión a la base de datos: " . $e->getMessage());
 }
 
-// Datos del propietario/inmobiliaria para los recibos
-$propietario_nombre = 'SECM Inmobiliaria';
-$propietario_direccion = 'Artigas 1159, General Rodriguez';
-$propietario_telefono = '(011) 1234-5678';
-$propietario_cuit = '30-12345678-9';
+// Cargar configuración de la empresa desde la base de datos
+$stmt = $pdo->query("SELECT * FROM empresa_configuracion WHERE id = 1");
+$empresa_config = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$empresa_config) {
+    // Fallback por si la tabla está vacía
+    $empresa_config = ['nombre' => 'Mi Inmobiliaria', 'direccion' => 'Mi Dirección', 'telefono' => 'Mi Teléfono', 'cuit' => 'Mi CUIT', 'email' => 'mi@email.com'];
+}
+
+// Definir variables globales para los datos de la empresa que se usarán en los recibos
+$propietario_nombre = $empresa_config['nombre'];
+$propietario_direccion = $empresa_config['direccion'];
+$propietario_telefono = $empresa_config['telefono'];
+$propietario_cuit = $empresa_config['cuit'];
+$propietario_email = $empresa_config['email'];
 
 // Función auxiliar para formatear moneda
 function formatearMoneda($monto) {

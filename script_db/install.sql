@@ -213,6 +213,25 @@ INSERT INTO users (nombre_completo, username, email, password, rol)
 VALUES ('Administrador', 'admin', 'admin@sistema.com', '$2y$10$kKFl3K/oqykaJP6/VQK4Y.3XljuDPw64dKW8YwZOBV41Wj9RWkeC.', 'admin')
 ON DUPLICATE KEY UPDATE id=id;
 
+--
+-- Estructura de tabla para la tabla `empresa_configuracion`
+--
+CREATE TABLE `empresa_configuracion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT 'SECM Inmobiliaria',
+  `direccion` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT 'Artigas 1159, General Rodriguez',
+  `telefono` varchar(100) COLLATE utf8mb4_spanish_ci DEFAULT '(011) 1234-5678',
+  `email` varchar(150) COLLATE utf8mb4_spanish_ci DEFAULT 'info@inmobiliaria.com',
+  `cuit` varchar(50) COLLATE utf8mb4_spanish_ci DEFAULT '30-12345678-9',
+  `logo_url` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- Insertar datos de la empresa por defecto
+INSERT INTO `empresa_configuracion` (`id`, `nombre`, `direccion`, `telefono`, `email`, `cuit`) VALUES
+(1, 'SECM Inmobiliaria', 'Artigas 1159, General Rodriguez', '(011) 1234-5678', 'info@inmobiliaria.com', '30-12345678-9')
+ON DUPLICATE KEY UPDATE id=id;
+
 -- -------------------------------------------------------------
 -- Fin del script de instalación.
 -- -------------------------------------------------------------
