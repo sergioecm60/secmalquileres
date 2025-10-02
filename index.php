@@ -11,6 +11,20 @@ $cobros_pendientes = $pdo->query("SELECT COUNT(*) FROM cobros WHERE status = 'PE
 $cobros_vencidos = $pdo->query("SELECT COUNT(*) FROM cobros WHERE status = 'VENCIDO'")->fetchColumn();
 $total_cobrado_mes = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM cobros WHERE status = 'PAGADO' AND MONTH(fecha_cobro) = MONTH(CURDATE()) AND YEAR(fecha_cobro) = YEAR(CURDATE())")->fetchColumn();
 
+// Después de las estadísticas existentes, agregar:
+$contratos_vencimiento = $pdo->query("SELECT COUNT(*) FROM contratos WHERE activo = 1 AND fecha_fin BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)")->fetchColumn();
+$contratos_vencimiento_critico = $pdo->query("SELECT COUNT(*) FROM contratos WHERE activo = 1 AND fecha_fin BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)")->fetchColumn();
+
+// Obtener datos para gráficos
+$cobros_por_mes = $pdo->query("SELECT mes, SUM(total) as total FROM cobros WHERE status = 'PAGADO' AND anio = YEAR(CURDATE()) GROUP BY mes ORDER BY mes")->fetchAll(PDO::FETCH_ASSOC);
+
+$propiedades_por_estado = $pdo->query("SELECT 
+    SUM(CASE WHEN activo = 1 THEN 1 ELSE 0 END) as activas,
+    SUM(CASE WHEN activo = 0 THEN 1 ELSE 0 END) as inactivas
+    FROM propiedades")->fetch(PDO::FETCH_ASSOC);
+
+$cobros_por_estado = $pdo->query("SELECT status, COUNT(*) as cantidad FROM cobros WHERE anio = YEAR(CURDATE()) GROUP BY status")->fetchAll(PDO::FETCH_ASSOC);
+
 // Próximos vencimientos
 $proximos_vencimientos = $pdo->query("SELECT cob.*, CONCAT(i.nombre, ' ', i.apellido) as nombre_completo, p.direccion, p.departamento 
                                        FROM cobros cob 
@@ -31,6 +45,7 @@ $nombre_usuario = obtenerNombreUsuario();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Alquileres</title>
     <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="dashboard-body">
     <div class="container">
@@ -87,6 +102,16 @@ $nombre_usuario = obtenerNombreUsuario();
                 <div class="value"><?php echo formatearMoneda($total_cobrado_mes); ?></div>
                 <div class="label">Cobrado Este Mes</div>
             </div>
+            
+            <!-- Agregar tarjeta en el dashboard -->
+            <?php if ($contratos_vencimiento > 0): ?>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div class="icon">⚠️</div>
+                <div class="value"><?= $contratos_vencimiento ?></div>
+                <div class="label">Contratos por Vencer</div>
+                <a href="alertas.php" style="color: white; text-decoration: underline; font-size: 12px;">Ver detalles</a>
+            </div>
+            <?php endif; ?>
         </div>
 
         <div class="menu-grid">
@@ -130,6 +155,71 @@ $nombre_usuario = obtenerNombreUsuario();
 
         </div>
 
+        <!-- Agregar sección de gráficos después de las tarjetas de estadísticas -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+            <!-- Gráfico de ingresos mensuales -->
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">📊 Ingresos Mensuales <?= date('Y') ?></h3>
+                <canvas id="graficoIngresos"></canvas>
+            </div>
+            
+            <!-- Gráfico de estados de cobros -->
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">📈 Estados de Cobros</h3>
+                <canvas id="graficoCobros"></canvas>
+            </div>
+        </div>
+
+        <script>
+        // Gráfico de ingresos mensuales
+        const ctxIngresos = document.getElementById('graficoIngresos').getContext('2d');
+        new Chart(ctxIngresos, {
+            type: 'bar',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Ingresos ($)',
+                    data: [
+                        <?php 
+                        $datos_meses = array_fill(1, 12, 0);
+                        foreach ($cobros_por_mes as $dato) {
+                            $datos_meses[$dato['mes']] = $dato['total'];
+                        }
+                        echo implode(',', array_values($datos_meses));
+                        ?>
+                    ],
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de estados de cobros
+        const ctxCobros = document.getElementById('graficoCobros').getContext('2d');
+        new Chart(ctxCobros, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendientes', 'Pagados', 'Vencidos'],
+                datasets: [{
+                    data: [<?php $estados = ['PENDIENTE' => 0, 'PAGADO' => 0, 'VENCIDO' => 0]; foreach ($cobros_por_estado as $dato) { if(isset($estados[$dato['status']])) $estados[$dato['status']] = $dato['cantidad']; } echo $estados['PENDIENTE'] . "," . $estados['PAGADO'] . "," . $estados['VENCIDO']; ?>],
+                    backgroundColor: ['#ffc107', '#28a745', '#dc3545']
+                }]
+            }
+        });
+        </script>
         <?php if (count($proximos_vencimientos) > 0): ?>
         <div class="recent-section">
             <h2>⏰ Próximos Vencimientos</h2>

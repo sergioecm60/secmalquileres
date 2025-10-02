@@ -172,6 +172,22 @@ CREATE TABLE `conceptos_cobro` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
+-- Estructura de tabla para la tabla `alertas_configuracion`
+--
+CREATE TABLE IF NOT EXISTS `alertas_configuracion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tipo` varchar(50) COLLATE utf8mb4_spanish_ci NOT NULL,
+  `dias_anticipacion` int(11) NOT NULL DEFAULT 30,
+  `activo` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- Insertar configuración por defecto
+INSERT INTO `alertas_configuracion` (`tipo`, `dias_anticipacion`, `activo`) VALUES
+('contrato_vencimiento', 30, 1),
+('contrato_vencimiento_critico', 7, 1);
+--
 -- Estructura de tabla para la tabla `users`
 --
 -- Tabla de usuarios para el sistema de login
