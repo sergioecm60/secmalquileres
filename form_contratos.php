@@ -69,13 +69,37 @@ $inquilinos = $pdo->query("SELECT id, nombre, apellido, dni FROM inquilinos WHER
 $propiedades = $pdo->query("SELECT id, codigo, direccion, departamento, localidad FROM propiedades WHERE activo = 1 ORDER BY direccion")->fetchAll(PDO::FETCH_ASSOC);
 $garantes = $pdo->query("SELECT id, nombre_apellido, dni FROM garantes ORDER BY nombre_apellido")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener contratos activos
-$contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inquilino, p.direccion, p.departamento, p.localidad 
-                          FROM contratos c 
-                          JOIN inquilinos i ON c.inquilino_id = i.id 
-                          JOIN propiedades p ON c.propiedad_id = p.id 
-                          WHERE c.activo = 1 
-                          ORDER BY c.id DESC")->fetchAll(PDO::FETCH_ASSOC);
+// Filtros
+$filtro_estado = $_GET['filtro_estado'] ?? 'activos';
+$busqueda = $_GET['busqueda'] ?? '';
+
+// Construir consulta
+$sql = "SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inquilino, p.direccion, p.departamento, p.localidad 
+        FROM contratos c 
+        JOIN inquilinos i ON c.inquilino_id = i.id 
+        JOIN propiedades p ON c.propiedad_id = p.id 
+        WHERE 1=1";
+$params = [];
+
+// Filtro por estado
+if ($filtro_estado === 'activos') {
+    $sql .= " AND c.activo = 1";
+} elseif ($filtro_estado === 'inactivos') {
+    $sql .= " AND c.activo = 0";
+}
+
+// Búsqueda
+if (!empty($busqueda)) {
+    $sql .= " AND (c.codigo LIKE :busqueda OR i.nombre LIKE :busqueda OR i.apellido LIKE :busqueda OR p.direccion LIKE :busqueda)";
+    $params[':busqueda'] = "%$busqueda%";
+}
+
+$sql .= " ORDER BY c.id DESC";
+
+// Ejecutar consulta
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$contratos = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -237,7 +261,30 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
             </form>
         </div>
 
-        <h2>Contratos Activos</h2>
+        <h2>Listado de Contratos</h2>
+
+        <!-- Filtros y búsqueda -->
+        <div class="filtros">
+            <form method="GET" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; width: 100%;">
+                <div>
+                    <label>Estado:</label>
+                    <select name="filtro_estado" onchange="this.form.submit()">
+                        <option value="activos" <?php echo $filtro_estado === 'activos' ? 'selected' : '' ?>>✅ Activos</option>
+                        <option value="inactivos" <?php echo $filtro_estado === 'inactivos' ? 'selected' : '' ?>>⏸️ Inactivos</option>
+                        <option value="todos" <?php echo $filtro_estado === 'todos' ? 'selected' : '' ?>>📊 Todos</option>
+                    </select>
+                </div>
+                <div style="flex-grow: 1;">
+                    <label>Buscar:</label>
+                    <input type="text" name="busqueda" value="<?php echo htmlspecialchars($busqueda) ?>" placeholder="Código, inquilino, dirección...">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+                    <a href="form_contratos.php" class="btn btn-secondary">🔄 Limpiar</a>
+                </div>
+            </form>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -262,10 +309,20 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                     <td><?php echo date('d/m/Y', strtotime($cont['fecha_inicio'])); ?></td>
                     <td><?php echo $cont['duracion_meses']; ?> meses</td>
                     <td><?php echo date('d/m/Y', strtotime($cont['fecha_fin'])); ?></td>
-                    <td><span class="badge badge-success">Activo</span></td>
+                    <td>
+                        <?php if ($cont['activo']): ?>
+                            <span class="badge badge-success">Activo</span>
+                        <?php else: ?>
+                            <span class="badge badge-danger">Inactivo</span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <button onclick="editarContrato(<?php echo $cont['id']; ?>)" class="btn btn-warning" title="Editar">✏️</button>
-                        <button onclick="eliminarContrato(<?php echo $cont['id']; ?>)" class="btn btn-danger" title="Eliminar/Desactivar">🗑️</button>
+                        <?php if ($cont['activo']): ?>
+                            <button onclick="desactivarContrato(<?php echo $cont['id']; ?>)" class="btn btn-danger" title="Desactivar">🗑️</button>
+                        <?php else: ?>
+                            <button onclick="activarContrato(<?php echo $cont['id']; ?>)" class="btn btn-success" title="Activar">▶️</button>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -521,15 +578,33 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
             document.getElementById('modalContrato').style.display = 'none';
         }
 
-        function eliminarContrato(id) {
-            if (!confirm('¿Está seguro de que desea desactivar este contrato? Esta acción lo marcará como inactivo.')) {
-                return;
-            }
-
+        function cambiarEstadoContrato(id, accion) {
+            const msj = accion === 'desactivar' ? '¿Está seguro de que desea desactivar este contrato?' : '¿Está seguro de que desea activar este contrato?';
+            if (!confirm(msj)) return;
+            
             const formData = new FormData();
-            formData.append('action', 'eliminar');
+            formData.append('action', accion);
             formData.append('id', id);
 
+            fetch('api/api_contratos.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) location.reload();
+                });
+        }
+
+        function desactivarContrato(id) {
+            cambiarEstadoContrato(id, 'desactivar');
+        }
+
+        function activarContrato(id) {
+            cambiarEstadoContrato(id, 'activar');
+        }
+
+        function guardarEdicion(event) {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('formEditarContrato'));
             fetch('api/api_contratos.php', { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {

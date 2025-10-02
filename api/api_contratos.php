@@ -14,9 +14,6 @@ switch ($action) {
     case 'editar':
         editarContrato($pdo);
         break;
-    case 'eliminar':
-        eliminarContrato($pdo);
-        break;
     case 'desactivar':
         cambiarEstado($pdo, 0);
         break;
@@ -107,11 +104,6 @@ function editarContrato($pdo) {
     } catch(PDOException $e) {
         echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
-}
-
-function eliminarContrato($pdo) {
-    // La eliminación de contratos se maneja desactivándolos (eliminación lógica).
-    cambiarEstado($pdo, 0); // Llama a la función que pone activo = 0
 }
 
 function finalizarContrato($pdo) {
