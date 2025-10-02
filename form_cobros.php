@@ -2,6 +2,14 @@
 require_once 'check_auth.php';
 require_once 'config.php';
 
+// Recuperar mensajes de la sesión (para el patrón Post-Redirect-Get)
+if (isset($_SESSION['mensaje'])) {
+    $mensaje = $_SESSION['mensaje'];
+    $tipo_mensaje = $_SESSION['tipo_mensaje'];
+    unset($_SESSION['mensaje']);
+    unset($_SESSION['tipo_mensaje']);
+}
+
 // Procesar formulario de cobro
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'guardar_cobro') {
     try {
@@ -48,11 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
             $_POST['observaciones']
         ]);
 
-        $mensaje = "Cobro registrado exitosamente con ID: " . $pdo->lastInsertId();
-        $tipo_mensaje = "success";
+        // Usar sesión para el mensaje y redirigir para evitar reenvío de formulario
+        $_SESSION['mensaje'] = "Cobro registrado exitosamente con ID: " . $pdo->lastInsertId();
+        $_SESSION['tipo_mensaje'] = "success";
+        header('Location: form_cobros.php');
+        exit();
     } catch(Exception $e) {
-        $mensaje = "Error: " . $e->getMessage();
-        $tipo_mensaje = "error";
+        $_SESSION['mensaje'] = "Error: " . $e->getMessage();
+        $_SESSION['tipo_mensaje'] = "error";
+        header('Location: form_cobros.php');
+        exit();
     }
 }
 
