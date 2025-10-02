@@ -103,10 +103,7 @@ CREATE TABLE `contratos` (
   `duracion_meses` int(11) NOT NULL,
   `fecha_fin` date NOT NULL,
   `deposito_ingreso` decimal(15,2) DEFAULT NULL,
-  `mes_1_3` decimal(15,2) DEFAULT NULL,
-  `mes_4_6` decimal(15,2) DEFAULT NULL,
-  `mes_7_9` decimal(15,2) DEFAULT NULL,
-  `mes_10_12` decimal(15,2) DEFAULT NULL,
+  `valores_alquiler` json DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 1,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -123,8 +120,8 @@ CREATE TABLE `contratos` (
 --
 -- Volcado de datos para la tabla `contratos` (EJEMPLO)
 --
-INSERT INTO `contratos` (`id`, `codigo`, `inquilino_id`, `propiedad_id`, `fecha_inicio`, `duracion_meses`, `fecha_fin`, `deposito_ingreso`, `mes_1_3`, `activo`) VALUES
-(1, 'CONT-2024-001', 1, 1, '2024-01-01', 12, '2024-12-31', 150000.00, 150000.00, 1);
+INSERT INTO `contratos` (`id`, `codigo`, `inquilino_id`, `propiedad_id`, `fecha_inicio`, `duracion_meses`, `fecha_fin`, `deposito_ingreso`, `valores_alquiler`, `activo`) VALUES
+(1, 'CONT-2024-001', 1, 1, '2024-01-01', 12, '2024-12-31', 150000.00, '[{\"desde\": \"1\", \"hasta\": \"12\", \"valor\": \"150000\"}]', 1);
 
 
 --

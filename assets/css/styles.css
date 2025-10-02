@@ -180,6 +180,28 @@ tr:hover { background: #f8f9fa; }
 .form-contratos .tab-content { display: none; }
 .form-contratos .tab-content.active { display: block; }
 
+/* Estilos para los períodos de alquiler dinámicos en form_contratos.php */
+.periodo-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr auto;
+    gap: 15px;
+    align-items: flex-end;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #fdfdfd;
+}
+
+.periodo-item .form-group {
+    margin-bottom: 0;
+}
+
+.periodo-item .btn-eliminar {
+    padding: 10px 12px;
+    height: fit-content;
+    margin-bottom: 0; /* Ajuste para alinear con los inputs */
+}
 /* Cobros */
 .form-cobros h1 { border-bottom-color: #dc3545; }
 .form-cobros .modal-header { background: #dc3545; }
