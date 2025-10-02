@@ -15,6 +15,12 @@ try {
     die("Error de conexión a la base de datos: " . $e->getMessage());
 }
 
+// Datos del propietario/inmobiliaria para los recibos
+$propietario_nombre = 'SECM Inmobiliaria';
+$propietario_direccion = 'Artigas 1159, General Rodriguez';
+$propietario_telefono = '(011) 1234-5678';
+$propietario_cuit = '30-12345678-9';
+
 // Función auxiliar para formatear moneda
 function formatearMoneda($monto) {
     return '$' . number_format($monto, 2, ',', '.');

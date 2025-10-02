@@ -141,9 +141,10 @@ function convertirGrupo($n) {
             <div class="recibo-header">
                 <div>
                     <h2>RECIBO DE PAGO</h2>
-                    <p><strong>Propietario:</strong> [Nombre del Propietario/Inmobiliaria]</p>
-                    <p><strong>Dirección:</strong> [Dirección del Propietario]</p>
-                    <p><strong>Teléfono:</strong> [Teléfono del Propietario]</p>
+                    <p><strong>Propietario:</strong> <?php echo htmlspecialchars($propietario_nombre); ?></p>
+                    <p><strong>Dirección:</strong> <?php echo htmlspecialchars($propietario_direccion); ?></p>
+                    <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($propietario_telefono); ?></p>
+                    <p><strong>CUIT:</strong> <?php echo htmlspecialchars($propietario_cuit); ?></p>
                 </div>
                 <div class="info">
                     <p><strong>Recibo N°:</strong> <?php echo str_pad($cobro_data['id'], 8, '0', STR_PAD_LEFT); ?></p>
