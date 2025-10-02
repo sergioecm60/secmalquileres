@@ -28,11 +28,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
         $fecha_inicio = $_POST['fecha_inicio'];
         $duracion = $_POST['duracion_meses'];
         $fecha_fin = date('Y-m-d', strtotime($fecha_inicio . " + $duracion months -1 day"));
+
+        // Procesar valores de alquiler dinámicos
+        $valores_alquiler = [];
+        if (isset($_POST['periodo_desde']) && is_array($_POST['periodo_desde'])) {
+            for ($i = 0; $i < count($_POST['periodo_desde']); $i++) {
+                $valores_alquiler[] = [
+                    'desde' => $_POST['periodo_desde'][$i],
+                    'hasta' => $_POST['periodo_hasta'][$i],
+                    'valor' => $_POST['periodo_valor'][$i]
+                ];
+            }
+        }
         
         $stmt = $pdo->prepare("INSERT INTO contratos (codigo, inquilino_id, propiedad_id, garante_id, 
                                fecha_inicio, duracion_meses, fecha_fin, deposito_ingreso, 
-                               mes_1_3, mes_4_6, mes_7_9, mes_10_12) 
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                               valores_alquiler) 
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             $_POST['codigo'],
             $_POST['inquilino_id'],
@@ -42,10 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
             $duracion,
             $fecha_fin,
             $_POST['deposito_ingreso'],
-            $_POST['mes_1_3'],
-            $_POST['mes_4_6'],
-            $_POST['mes_7_9'],
-            $_POST['mes_10_12']
+            json_encode($valores_alquiler)
         ]);
         $mensaje = "Contrato registrado exitosamente con ID: " . $pdo->lastInsertId();
         $tipo_mensaje = "success";
@@ -208,28 +217,19 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
                 </div>
 
                 <div class="card">
-                    <h3>Valores de Alquiler por Período</h3>
-                    
-                    <div class="grid-4">
-                        <div class="form-group">
-                            <label for="mes_1_3">Meses 1 a 3</label>
-                            <input type="number" id="mes_1_3" name="mes_1_3" step="0.01" placeholder="0.00">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Valores de Alquiler por Período</h3>
+                        <button type="button" class="btn btn-secondary" onclick="agregarPeriodo()">➕ Agregar Período</button>
+                    </div>
+                    <div id="periodos-container">
+                        <!-- Los períodos se agregarán aquí dinámicamente -->
+                        <div class="periodo-item">
+                            <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" placeholder="Ej: 1" required></div>
+                            <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" placeholder="Ej: 6" required></div>
+                            <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" placeholder="0.00" required></div>
+                            <button type="button" class="btn btn-eliminar" onclick="this.parentElement.remove()">🗑️</button>
                         </div>
 
-                        <div class="form-group">
-                            <label for="mes_4_6">Meses 4 a 6</label>
-                            <input type="number" id="mes_4_6" name="mes_4_6" step="0.01" placeholder="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mes_7_9">Meses 7 a 9</label>
-                            <input type="number" id="mes_7_9" name="mes_7_9" step="0.01" placeholder="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mes_10_12">Meses 10 a 12</label>
-                            <input type="number" id="mes_10_12" name="mes_10_12" step="0.01" placeholder="0.00">
-                        </div>
                     </div>
                 </div>
 
@@ -269,5 +269,32 @@ $contratos = $pdo->query("SELECT c.*, CONCAT(i.nombre, ' ', i.apellido) as inqui
     </div>
 
     <script src="assets/js/main.js"></script>
+    <script>
+        function agregarPeriodo() {
+            const container = document.getElementById('periodos-container');
+            const item = document.createElement('div');
+            item.classList.add('periodo-item');
+            item.innerHTML = `
+                <div class="form-group"><label>Mes Desde</label><input type="number" name="periodo_desde[]" min="1" placeholder="Ej: 7" required></div>
+                <div class="form-group"><label>Mes Hasta</label><input type="number" name="periodo_hasta[]" min="1" placeholder="Ej: 12" required></div>
+                <div class="form-group"><label>Valor del Alquiler</label><input type="number" name="periodo_valor[]" step="0.01" placeholder="0.00" required></div>
+                <button type="button" class="btn btn-eliminar" onclick="this.parentElement.remove()">🗑️</button>
+            `;
+            container.appendChild(item);
+        }
+
+        // Sobrescribir la función showTab para que no dé error si no existe el elemento
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            const clickedTab = event.currentTarget;
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            clickedTab.classList.add('active');
+        }
+    </script>
 </body>
 </html>
